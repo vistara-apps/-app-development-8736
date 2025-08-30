@@ -1,5 +1,5 @@
 import React from 'react'
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts'
 
 // Simple sparkline component using div elements
 function SimpleSparkline({ data, width = 64, height = 32 }) {
@@ -27,6 +27,20 @@ function SimpleSparkline({ data, width = 64, height = 32 }) {
   )
 }
 
+// Custom tooltip for charts
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-surface dark:bg-surface-dark p-2 border border-border dark:border-border-dark rounded shadow-md">
+        <p className="text-sm font-medium text-text-primary dark:text-text-primary-dark">{`Time: ${label}`}</p>
+        <p className="text-sm text-primary">{`Value: ${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 export default function MonitoredMetric({ 
   title, 
   value, 
@@ -39,29 +53,45 @@ export default function MonitoredMetric({
   const trendColors = {
     up: 'text-success',
     down: 'text-error',
-    stable: 'text-text-secondary'
+    stable: 'text-text-secondary dark:text-text-secondary-dark'
+  }
+
+  const trendIcons = {
+    up: '↗',
+    down: '↘',
+    stable: '→'
   }
 
   if (variant === 'lineChart') {
     return (
       <div className={`card ${className}`}>
         <div className="mb-4">
-          <h3 className="font-medium text-text-primary">{title}</h3>
-          <p className="text-2xl font-semibold mt-1">
+          <h3 className="font-medium text-text-primary dark:text-text-primary-dark">{title}</h3>
+          <p className="text-2xl font-semibold mt-1 text-text-primary dark:text-text-primary-dark">
             {value}{unit}
           </p>
         </div>
-        <div className="h-32">
+        <div className="h-48 sm:h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <XAxis dataKey="time" hide />
-              <YAxis hide />
+            <LineChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 5% 88%)" className="dark:stroke-border-dark" />
+              <XAxis 
+                dataKey="time" 
+                className="text-text-secondary dark:text-text-secondary-dark" 
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis 
+                className="text-text-secondary dark:text-text-secondary-dark" 
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip content={<CustomTooltip />} />
               <Line 
                 type="monotone" 
                 dataKey="value" 
                 stroke="hsl(240 70% 50%)" 
                 strokeWidth={2}
                 dot={false}
+                activeDot={{ r: 6, fill: "hsl(240 70% 50%)" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -76,15 +106,15 @@ export default function MonitoredMetric({
     return (
       <div className={`card ${className}`}>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="font-medium text-text-primary">{title}</h3>
+          <h3 className="font-medium text-text-primary dark:text-text-primary-dark">{title}</h3>
           <div className="h-8 w-16">
             <SimpleSparkline data={sparklineData} width={64} height={32} />
           </div>
         </div>
         <div className="flex items-baseline space-x-2">
-          <span className="text-2xl font-semibold">{value}{unit}</span>
+          <span className="text-2xl font-semibold text-text-primary dark:text-text-primary-dark">{value}{unit}</span>
           <span className={`text-sm ${trendColors[trend]}`}>
-            {trend === 'up' ? '↗' : trend === 'down' ? '↘' : '→'}
+            {trendIcons[trend]}
           </span>
         </div>
       </div>
@@ -92,12 +122,12 @@ export default function MonitoredMetric({
   }
 
   return (
-    <div className={`card ${className}`}>
-      <h3 className="font-medium text-text-secondary mb-1">{title}</h3>
+    <div className={`card ${className} transition-all hover:shadow-md`}>
+      <h3 className="font-medium text-text-secondary dark:text-text-secondary-dark mb-1">{title}</h3>
       <div className="flex items-baseline space-x-2">
-        <span className="text-3xl font-bold">{value}{unit}</span>
+        <span className="text-3xl font-bold text-text-primary dark:text-text-primary-dark">{value}{unit}</span>
         <span className={`text-sm ${trendColors[trend]}`}>
-          {trend === 'up' ? '↗' : trend === 'down' ? '↘' : '→'}
+          {trendIcons[trend]}
         </span>
       </div>
     </div>
