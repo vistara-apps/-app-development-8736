@@ -7,36 +7,73 @@
     @apply border-border;
   }
   body {
-    @apply bg-bg text-text-primary;
+    @apply bg-bg text-text-primary transition-colors duration-200;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  .dark body {
+    @apply bg-bg-dark text-text-primary-dark;
+  }
+  
+  /* Improve focus styles for better accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
   }
   
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary/90;
+    @apply bg-primary text-white hover:bg-primary/90 active:bg-primary/95;
     @apply h-10 px-4 py-2;
   }
   
   .btn-secondary {
-    @apply bg-surface text-text-primary border border-border hover:bg-slate-100;
+    @apply bg-surface text-text-primary border border-border hover:bg-slate-100 active:bg-slate-200;
     @apply h-10 px-4 py-2;
+    @apply dark:bg-surface-dark dark:text-text-primary-dark dark:border-border-dark dark:hover:bg-slate-700 dark:active:bg-slate-600;
   }
   
   .btn-ghost {
-    @apply hover:bg-slate-100;
+    @apply text-text-primary hover:bg-slate-100 active:bg-slate-200;
     @apply h-10 px-4 py-2;
+    @apply dark:text-text-primary-dark dark:hover:bg-slate-800 dark:active:bg-slate-700;
   }
   
   .card {
-    @apply rounded-lg border border-border bg-surface p-6 shadow-card;
+    @apply rounded-lg border border-border bg-surface p-6 shadow-card transition-colors duration-200;
+    @apply dark:border-border-dark dark:bg-surface-dark dark:shadow-dark-card;
   }
   
   .input {
-    @apply flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm transition-colors duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply dark:border-border-dark dark:bg-surface-dark dark:text-text-primary-dark dark:placeholder:text-text-secondary-dark;
+  }
+  
+  /* Skeleton loading animation */
+  .animate-pulse {
+    @apply dark:bg-slate-800 dark:[&>*]:bg-slate-700;
   }
 }
